@@ -15,6 +15,7 @@ export default component$ =>
 
   useVisibleTask$ ({ cleanup }) =>
     listsEl := document.querySelector("div.lists") as HTMLElement
+    placeholderEl := document.querySelector("ul.placeholder") as HTMLElement
 
     let activeItem: null | {
       el: HTMLElement
@@ -40,6 +41,11 @@ export default component$ =>
             top:  clientY - offset.y + "px"
             left: clientX - offset.x + "px"
 
+          Object.assign placeholderEl.style,
+            height: rect.height + "px"
+            width: rect.width + "px"
+            display: "block"
+
       return
 
     dragover := (event: DragEvent) ->
@@ -58,6 +64,7 @@ export default component$ =>
     dragend := (event: DragEvent) ->
       window.requestAnimationFrame ->
         if activeItem
+          // TODO: swap positions
           { el } := activeItem
           el.classList.remove "dragging"
           Object.assign el.style,
@@ -85,4 +92,5 @@ export default component$ =>
         {list.map (item) =>
           <li>{item}
         }
+      <ul .placeholder>
     }
