@@ -1,0 +1,88 @@
+import {
+  $,
+  QwikDragEvent,
+  component$,
+  useSignal,
+  useStyles$,
+  useVisibleTask$,
+} from @builder.io/qwik
+
+import style from ./style.styl?inline
+
+export default component$ =>
+  useStyles$(style)
+  lists := useSignal([["a", "b", "c"], ["d", "e", "f"]])
+
+  useVisibleTask$ ({ cleanup }) =>
+    listsEl := document.querySelector("div.lists") as HTMLElement
+
+    let activeItem: null | {
+      el: HTMLElement
+      offset: { x: number; y: number }
+    }
+
+    dragstart := (event: DragEvent) ->
+      el := event.target as HTMLElement
+      { clientX, clientY } := event
+
+      if el
+        event.dataTransfer?.setDragImage(window.emptyImage, 0, 0)
+
+        rect := el.getBoundingClientRect()
+        offset :=
+          x: clientX - rect.left
+          y: clientY - rect.top
+        activeItem = { el, offset }
+
+        window.requestAnimationFrame ->
+          el.classList.add "dragging"
+          Object.assign el.style,
+            top:  clientY - offset.y + "px"
+            left: clientX - offset.x + "px"
+
+      return
+
+    dragover := (event: DragEvent) ->
+      if activeItem
+        event.preventDefault()
+        { clientX, clientY } := event
+
+        // NOTE: Dragging is much smoother when the style is updated in an animation frame.
+        window.requestAnimationFrame ->
+          if activeItem
+            { el, offset } := activeItem
+            Object.assign el.style,
+              top:  clientY - offset.y + "px"
+              left: clientX - offset.x + "px"
+
+    dragend := (event: DragEvent) ->
+      window.requestAnimationFrame ->
+        if activeItem
+          { el } := activeItem
+          el.classList.remove "dragging"
+          Object.assign el.style,
+            top: ""
+            left: ""
+
+          activeItem = null
+
+    // NOTE: Attaching dragover to document so we don't have dead spots based on which element we are over
+    document.addEventListener "dragover", dragover
+    document.addEventListener "dragend", dragend
+    listsEl.addEventListener "dragstart", dragstart
+
+    cleanup =>
+      document.removeEventListener "dragover", dragover
+      document.removeEventListener "dragend", dragend
+      listsEl.removeEventListener "dragstart", dragstart
+
+  , strategy: 'document-ready'
+
+  <div .lists>
+    {lists.value.map (list, i) =>
+      <ul draggable>
+        <h2> Heyy {i}
+        {list.map (item) =>
+          <li>{item}
+        }
+    }

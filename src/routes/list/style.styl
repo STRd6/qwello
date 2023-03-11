@@ -1,0 +1,28 @@
+ul
+  background-color: white
+  border-radius: 4px
+  border: var(--border)
+  box-shadow: var(--shadow-low)
+  list-style-type: none
+  margin: 0
+  padding: 4px 4px 0px
+  width: 400px
+
+  > li
+    border-radius: 4px
+    border: var(--border)
+    margin-bottom: 4px
+    padding: 8px
+
+    &[contenteditable]
+      box-shadow: inset var(--shadow-low)
+
+div.lists
+  display: flex
+  flex-direction: row
+  gap: 8px
+
+.dragging
+  box-shadow: var(--shadow-medium)
+  position: absolute
+  transform: rotate(1deg)
