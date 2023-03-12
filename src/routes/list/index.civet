@@ -23,10 +23,19 @@ export default component$ =>
     }
 
     dragstart := (event: DragEvent) ->
-      el := event.target as HTMLElement
-      { clientX, clientY } := event
+      target .= event.target as HTMLElement | Node
+      let el: HTMLElement
+
+      if (target <? HTMLElement)
+        el = target
+      else
+        el = target.parentElement!
+
+      // Find the closest draggable element
+      el = el.closest("[draggable]")!
 
       if el
+        { clientX, clientY } := event
         event.dataTransfer?.setDragImage(window.emptyImage, 0, 0)
 
         rect := el.getBoundingClientRect()
@@ -36,15 +45,16 @@ export default component$ =>
         activeItem = { el, offset }
 
         window.requestAnimationFrame ->
-          el.classList.add "dragging"
-          Object.assign el.style,
-            top:  clientY - offset.y + "px"
-            left: clientX - offset.x + "px"
-
           Object.assign placeholderEl.style,
             height: rect.height + "px"
             width: rect.width + "px"
             display: "block"
+
+          el.classList.add "dragging"
+
+          Object.assign el.style,
+            top:  clientY - offset.y + "px"
+            left: clientX - offset.x + "px"
 
       return
 
