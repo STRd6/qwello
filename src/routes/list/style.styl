@@ -1,3 +1,6 @@
+[draggable]
+  cursor: pointer
+
 ul
   background-color: white
   border-radius: 4px
@@ -9,13 +12,16 @@ ul
   width: 400px
 
   > li
-    border-radius: 4px
+    border-radius: var(--border-radius)
     border: var(--border)
     margin-bottom: 4px
     padding: 8px
 
     &[contenteditable]
       box-shadow: inset var(--shadow-low)
+
+    &:empty::before
+      content: "\00a0"
 
 div.lists
   display: flex
@@ -24,6 +30,7 @@ div.lists
 
 .dragging
   box-shadow: var(--shadow-medium)
+  pointer-events: none
   position: absolute
   transform: rotate(1deg)
 
@@ -32,3 +39,27 @@ ul.placeholder
   border: none
   box-shadow: none
   display: none
+
+form.add
+  display: flex
+  margin-bottom: 4px
+
+  > input
+    border-bottom-left-radius: var(--border-radius)
+    border-top-left-radius: var(--border-radius)
+    border: var(--border)
+    border-right: none
+    box-shadow: inset var(--shadow-low)
+    padding: 8px
+    width: 100%
+
+  > button
+    align-self: stretch
+    border-bottom-right-radius: var(--border-radius)
+    border-top-right-radius: var(--border-radius)
+    border: var(--border)
+    padding: 8px
+
+    box-shadow: var(--shadow-low)
+    &:active
+      box-shadow: inset var(--shadow-low)

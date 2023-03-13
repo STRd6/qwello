@@ -9,6 +9,7 @@ export default component$(() => {
     <header>
       I'm the header component
       <img id="emptyImage" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" width="0" height="0"/>
+      <div class="debug" />
     </header>
   );
 });

@@ -1,6 +1,7 @@
 import {
   $,
   QwikDragEvent,
+  QwikSubmitEvent,
   component$,
   useSignal,
   useStyles$,
@@ -13,7 +14,8 @@ export default component$ =>
   useStyles$(style)
   lists := useSignal([["a", "b", "c"], ["d", "e", "f"]])
 
-  useVisibleTask$ ({ cleanup }) =>
+  useVisibleTask$ ({ cleanup, track }) =>
+    track(lists)
     listsEl := document.querySelector("div.lists") as HTMLElement
     placeholderEl := document.querySelector("ul.placeholder") as HTMLElement
 
@@ -61,7 +63,7 @@ export default component$ =>
     dragover := (event: DragEvent) ->
       if activeItem
         event.preventDefault()
-        { clientX, clientY } := event
+        { clientX, clientY, target } := event
 
         // NOTE: Dragging is much smoother when the style is updated in an animation frame.
         window.requestAnimationFrame ->
@@ -71,17 +73,39 @@ export default component$ =>
               top:  clientY - offset.y + "px"
               left: clientX - offset.x + "px"
 
+            let targetEl: HTMLElement | null | undefined
+            if target
+              if target <? HTMLElement
+                targetEl = target.closest("[draggable]")
+              else
+                targetEl = target.parentElement.closest("[draggable]")
+
+              targetEl = targetEl?.parentElement
+
+            // targetEl is the container of all the lists
+            if targetEl
+              n := lists.value.length
+              { left, width } := targetEl.getBoundingClientRect()
+              x := Math.floor ( clientX - left ) * n / width
+
+              listElements := targetEl.querySelectorAll(":scope > ul[draggable]:not(.dragging)")
+              document.querySelector("div.debug")!.textContent = `${x}, ${listElements.length}`
+              targetEl.insertBefore placeholderEl, listElements[x+1]
+
+
     dragend := (event: DragEvent) ->
       window.requestAnimationFrame ->
         if activeItem
-          // TODO: swap positions
           { el } := activeItem
           el.classList.remove "dragging"
           Object.assign el.style,
             top: ""
             left: ""
 
+          placeholderEl.insertAdjacentElement "afterend", placeholderEl
+
           activeItem = null
+          placeholderEl.style.display = "none"
 
     // NOTE: Attaching dragover to document so we don't have dead spots based on which element we are over
     document.addEventListener "dragover", dragover
@@ -97,10 +121,20 @@ export default component$ =>
 
   <div .lists>
     {lists.value.map (list, i) =>
+      onSubmit$ := $ (event: QwikSubmitEvent<HTMLFormElement>, form: HTMLFormElement) ->
+        inputEl := form.querySelector("input") as HTMLInputElement
+        listsValue := lists.value
+        listsValue[i].push inputEl.value
+        lists.value = listsValue.slice()
+        inputEl.value = ""
+
       <ul draggable>
         <h2> Heyy {i}
         {list.map (item) =>
           <li>{item}
         }
+        <form .add preventdefault:submit {onSubmit$}>
+          <input name=""/>
+          <button >Add</button>
       <ul .placeholder>
     }
