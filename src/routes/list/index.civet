@@ -4,6 +4,8 @@ import {
   QwikSubmitEvent,
   component$,
   useSignal,
+  useOn,
+  useOnDocument,
   useStyles$,
   useVisibleTask$,
 } from @builder.io/qwik
@@ -18,6 +20,7 @@ export default component$ =>
     track(lists)
     listsEl := document.querySelector("div.lists") as HTMLElement
     placeholderEl := document.querySelector("ul.placeholder") as HTMLElement
+    emptyImage := document.createElement("img")
 
     let activeItem: null | {
       el: HTMLElement
@@ -38,7 +41,7 @@ export default component$ =>
 
       if el
         { clientX, clientY } := event
-        event.dataTransfer?.setDragImage(window.emptyImage, 0, 0)
+        event.dataTransfer?.setDragImage(emptyImage, 0, 0)
 
         rect := el.getBoundingClientRect()
         offset :=
@@ -76,9 +79,9 @@ export default component$ =>
             let targetEl: HTMLElement | null | undefined
             if target
               if target <? HTMLElement
-                targetEl = target.closest("[draggable]")
+                targetEl = target.closest("[draggable]") as HTMLElement
               else
-                targetEl = target.parentElement.closest("[draggable]")
+                targetEl = (target as Node | Element).parentElement!.closest("[draggable]") as HTMLElement
 
               targetEl = targetEl?.parentElement
 
@@ -102,7 +105,7 @@ export default component$ =>
             top: ""
             left: ""
 
-          placeholderEl.parentElement.insertBefore el, placeholderEl
+          placeholderEl.parentElement!.insertBefore el, placeholderEl
 
           activeItem = null
           placeholderEl.style.display = "none"
