@@ -90,7 +90,7 @@ export default component$ =>
 
               listElements := targetEl.querySelectorAll(":scope > ul[draggable]:not(.dragging)")
               document.querySelector("div.debug")!.textContent = `${x}, ${listElements.length}`
-              targetEl.insertBefore placeholderEl, listElements[x+1]
+              targetEl.insertBefore placeholderEl, listElements[x]
 
 
     dragend := (event: DragEvent) ->
@@ -102,7 +102,7 @@ export default component$ =>
             top: ""
             left: ""
 
-          placeholderEl.insertAdjacentElement "afterend", placeholderEl
+          placeholderEl.parentElement.insertBefore el, placeholderEl
 
           activeItem = null
           placeholderEl.style.display = "none"
