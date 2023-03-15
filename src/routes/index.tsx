@@ -1,11 +1,13 @@
-import { App } from "../components/app.civet"
+import { App } from "../components/app.civet";
 
 export default App;
 
 export const head: DocumentHead = {
-  title: 'Welcome to Qwik',
-  meta: [{
-    name: 'description',
-    content: 'Qwik site description',
-  }]
+  title: "Qwello",
+  meta: [
+    {
+      name: "description",
+      content: "A Trello clone built with Qwik",
+    },
+  ],
 };

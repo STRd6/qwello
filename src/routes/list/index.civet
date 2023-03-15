@@ -27,17 +27,16 @@ export default component$ =>
       offset: { x: number; y: number }
     }
 
+    closest := (node: Node | HTMLElement, selector: string): HTMLElement | null ->
+      if (node <? HTMLElement)
+        node.closest(selector)
+      else
+        node.parentElement!.closest(selector)
+
     dragstart := (event: DragEvent) ->
       target .= event.target as HTMLElement | Node
-      let el: HTMLElement
-
-      if (target <? HTMLElement)
-        el = target
-      else
-        el = target.parentElement!
-
       // Find the closest draggable element
-      el = el.closest("[draggable]")!
+      el := closest(target, "[draggable]")
 
       if el
         { clientX, clientY } := event
@@ -76,24 +75,18 @@ export default component$ =>
               top:  clientY - offset.y + "px"
               left: clientX - offset.x + "px"
 
-            let targetEl: HTMLElement | null | undefined
             if target
-              if target <? HTMLElement
-                targetEl = target.closest("[draggable]") as HTMLElement
-              else
-                targetEl = (target as Node | Element).parentElement!.closest("[draggable]") as HTMLElement
+              targetEl := closest(target as HTMLElement, "div.lists")
 
-              targetEl = targetEl?.parentElement
+              // targetEl is the container of all the lists
+              if targetEl
+                n := lists.value.length
+                { left, width } := targetEl.getBoundingClientRect()
+                x := Math.floor ( clientX - left ) * n / width
 
-            // targetEl is the container of all the lists
-            if targetEl
-              n := lists.value.length
-              { left, width } := targetEl.getBoundingClientRect()
-              x := Math.floor ( clientX - left ) * n / width
-
-              listElements := targetEl.querySelectorAll(":scope > ul[draggable]:not(.dragging)")
-              document.querySelector("div.debug")!.textContent = `${x}, ${listElements.length}`
-              targetEl.insertBefore placeholderEl, listElements[x]
+                listElements := targetEl.querySelectorAll(":scope > ul[draggable]:not(.dragging)")
+                document.querySelector("div.debug")!.textContent = `${x}, ${listElements.length}`
+                targetEl.insertBefore placeholderEl, listElements[x]
 
 
     dragend := (event: DragEvent) ->

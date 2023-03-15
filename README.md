@@ -63,3 +63,16 @@ The production build will generate client and server modules by running both cli
 ```shell
 yarn build # or `yarn build`
 ```
+
+## UI
+
+Basic problems that should be solved by any UI framework:
+
+- Virtualized Lists display only the visible elements of potentially tens of thousands
+- Collection mapping and splices only update the elements inserted or removed.
+- Updates from a component shouldn't rerender the component that triggered the change (input changed, drag dropped)
+
+- Filetree (expand / collapse) built on top of virtualized lists.
+- Trello lists of lists
+- Spreadsheet
+- Table
