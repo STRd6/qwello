@@ -16,7 +16,13 @@ import style from ./style.styl?inline
 
 export default component$ =>
   useStyles$(style)
-  lists := useSignal([["a", "b", "c"], ["d", "e", "f"]])
+  lists := useSignal([{
+    items: ["a", "b", "c"]
+  }, {
+    items: ["d", "e", "f"]
+  }, {
+    items: ["g", "h", "i"]
+  }])
 
   useVisibleTask$ ({ cleanup, track }) =>
     track(lists)
@@ -122,13 +128,13 @@ export default component$ =>
       onSubmit$ := $ (event: QwikSubmitEvent<HTMLFormElement>, form: HTMLFormElement) ->
         inputEl := form.querySelector("input") as HTMLInputElement
         listsValue := lists.value
-        listsValue[i].push inputEl.value
+        listsValue[i].items.push inputEl.value
         lists.value = listsValue.slice()
         inputEl.value = ""
 
       <ul draggable>
         <h2> Heyy {i}
-        {list.map (item) =>
+        {list.items.map (item) =>
           <li draggable>
             <textarea value={item}>
         }
