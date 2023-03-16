@@ -129,7 +129,7 @@ export default component$ =>
       <ul draggable>
         <h2> Heyy {i}
         {list.map (item) =>
-          <li>
+          <li draggable>
             <textarea value={item}>
         }
         <form .add preventdefault:submit {onSubmit$}>

@@ -11,22 +11,35 @@ ul
   padding: 4px 4px 0px
   width: 400px
 
-  > li
-    margin-bottom: 4px
+li
+  background-color: transparent
+  border-radius: var(--border-radius)
+  display: block
 
-    > textarea
-      border-radius: var(--border-radius)
-      border: var(--border)
-      font: inherit
-      height: 40px
-      margin: 0
-      overflow: hidden
-      padding: 8px
-      resize: none
-      width: 100%
+  &:empty::before
+    content: "\00a0"
 
-    &:empty::before
-      content: "\00a0"
+:focus-visible
+  border: 2px solid var(--color-primary)
+  outline: none
+
+textarea
+  border-radius: var(--border-radius)
+  border: var(--border)
+  display: block
+  font: inherit
+  height: 40px
+  margin: 0 0 4px 0
+  overflow: hidden
+  padding: 7px
+  resize: none
+  width: 100%
+
+  &:focus-visible
+    padding: 6px
+
+  .dragging > &
+    margin: 0
 
 div.lists
   display: flex
