@@ -12,13 +12,18 @@ ul
   width: 400px
 
   > li
-    border-radius: var(--border-radius)
-    border: var(--border)
     margin-bottom: 4px
-    padding: 8px
 
-    &[contenteditable]
-      box-shadow: inset var(--shadow-low)
+    > textarea
+      border-radius: var(--border-radius)
+      border: var(--border)
+      font: inherit
+      height: 40px
+      margin: 0
+      overflow: hidden
+      padding: 8px
+      resize: none
+      width: 100%
 
     &:empty::before
       content: "\00a0"

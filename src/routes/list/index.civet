@@ -1,11 +1,13 @@
 import {
   $,
   QwikDragEvent,
+  QwikFocusEvent,
+  QwikMouseEvent,
   QwikSubmitEvent,
   component$,
-  useSignal,
   useOn,
   useOnDocument,
+  useSignal,
   useStyles$,
   useVisibleTask$,
 } from @builder.io/qwik
@@ -127,7 +129,8 @@ export default component$ =>
       <ul draggable>
         <h2> Heyy {i}
         {list.map (item) =>
-          <li>{item}
+          <li>
+            <textarea value={item}>
         }
         <form .add preventdefault:submit {onSubmit$}>
           <input name=""/>
