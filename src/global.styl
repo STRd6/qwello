@@ -45,6 +45,7 @@ button.new-list
   width: 400px
 
 section
+  align-items: flex-start
   border-bottom: 10px solid var(--qwik-dark-blue)
   display: flex
   gap: 8px
@@ -78,6 +79,15 @@ ul
   padding: 4px 4px 0px
   width: 400px
 
+  > input
+    border-radius: var(--border-radius)
+    border: 2px solid transparent
+    display: block
+    font-size: 16px
+    font-weight: bold
+    margin: 0 0 4px 0
+    width: 100%
+
 li
   background-color: transparent
   border-radius: var(--border-radius)
@@ -87,8 +97,7 @@ li
     content: "\00a0"
 
 :focus-visible
-  border: 2px solid var(--color-primary)
-  outline: none
+  outline: 2px solid var(--color-primary)
 
 textarea
   border-radius: var(--border-radius)
@@ -109,6 +118,7 @@ textarea
     margin: 0
 
 div.lists
+  align-items: flex-start
   display: flex
   flex-direction: row
   gap: 8px
@@ -130,21 +140,21 @@ form.add
   margin-bottom: 4px
 
   > input
-    border-bottom-left-radius: var(--border-radius)
-    border-top-left-radius: var(--border-radius)
+    border-radius: var(--border-radius)
     border: var(--border)
-    border-right: none
     box-shadow: inset var(--shadow-low)
+    margin-right: 4px
     padding: 8px
     width: 100%
 
   > button
     align-self: stretch
-    border-bottom-right-radius: var(--border-radius)
-    border-top-right-radius: var(--border-radius)
-    border: var(--border)
-    padding: 8px
 
-    box-shadow: var(--shadow-low)
-    &:active
-      box-shadow: inset var(--shadow-low)
+button
+  border-radius: var(--border-radius)
+  border: var(--border)
+  padding: 8px
+
+  box-shadow: var(--shadow-low)
+  &:active
+    box-shadow: inset var(--shadow-low)

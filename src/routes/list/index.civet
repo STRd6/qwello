@@ -11,19 +11,28 @@ import {
   useStore,
   useStyles$,
   useTask$,
+  useResource$,
   useVisibleTask$,
 } from @builder.io/qwik
 
+import { isBrowser } from @builder.io/qwik/build
+
+interface State
+  lists: {
+    name: string
+    items: string[]
+  }[]
+
 export default component$ =>
-  state := useStore {
-    lists: [{
-      items: ["a", "b", "c"]
-    }, {
-      items: ["d", "e", "f"]
-    }, {
-      items: ["g", "h", "i"]
-    }]
+  state := useStore<State> {
+    lists: []
   }, deep: true
+
+  useVisibleTask$ () =>
+    if isBrowser
+      lists := window.localStorage.getItem "lists"
+      if lists
+        state.lists = JSON.parse lists
 
   useVisibleTask$ ({ cleanup, track }) =>
     track(state.lists)
@@ -31,9 +40,22 @@ export default component$ =>
     placeholderEl := document.querySelector("ul.placeholder") as HTMLElement
     emptyImage := document.createElement("img")
 
+    persist := ->
+      console.log("saving lists", state.lists)
+      window.localStorage.setItem "lists", JSON.stringify state.lists
+
+    let timeout: number | null
+    window.dirty = ->
+      return if timeout
+      timeout = window.setTimeout ->
+        timeout = null
+        persist()
+      , 500
+
     let activeItem: null | {
       el: HTMLElement
       offset: { x: number; y: number }
+      startIndex: number
     }
 
     closest := (node: Node | HTMLElement, selector: string): HTMLElement | null ->
@@ -55,9 +77,15 @@ export default component$ =>
         offset :=
           x: clientX - rect.left
           y: clientY - rect.top
-        activeItem = { el, offset }
+        startIndex := Array.prototype.indexOf.call el.parentElement!.querySelectorAll(":scope > [draggable]"), el
+        activeItem = { el, offset, startIndex }
+
+        console.log(activeItem)
 
         window.requestAnimationFrame ->
+          if document.activeElement
+            document.activeElement.blur()
+
           Object.assign placeholderEl.style,
             height: rect.height + "px"
             width: rect.width + "px"
@@ -99,18 +127,28 @@ export default component$ =>
 
 
     dragend := (event: DragEvent) ->
-      window.requestAnimationFrame ->
-        if activeItem
-          { el } := activeItem
-          el.classList.remove "dragging"
-          Object.assign el.style,
-            top: ""
-            left: ""
+      if activeItem
+        const endIndex = Array.prototype.indexOf.call placeholderEl.parentElement!.querySelectorAll(":scope > ul:not(.dragging)"), placeholderEl
+        { startIndex } := activeItem
+        if startIndex === endIndex
+          return
 
-          placeholderEl.parentElement!.insertBefore el, placeholderEl
+        // use splice to move the item
+        from := state.lists[startIndex]
+        to := state.lists[endIndex]
+        state.lists.splice endIndex, 0, state.lists.splice(startIndex, 1)[0]
 
-          activeItem = null
-          placeholderEl.style.display = "none"
+        console.log "moved", startIndex, endIndex, from.name, to.name
+        window.dirty?()
+
+        { el } := activeItem
+        el.classList.remove "dragging"
+        Object.assign el.style,
+          top: ""
+          left: ""
+
+        activeItem = null
+        placeholderEl.style.display = "none"
 
     // NOTE: Attaching dragover to document so we don't have dead spots based on which element we are over
     document.addEventListener "dragover", dragover
@@ -127,24 +165,31 @@ export default component$ =>
   <div .lists>
     {state.lists.map (list, i) =>
       onSubmit$ := $ (event: QwikSubmitEvent<HTMLFormElement>, form: HTMLFormElement) ->
-        debugger
         inputEl := form.querySelector("input") as HTMLInputElement
         list.items.push inputEl.value
         inputEl.value = ""
+        window.dirty?()
+        return
 
       <ul draggable>
-        <h2> Heyy {i}
+        <input value={list.name} onInput$={(_, el) =>
+          list.name = el.value
+          window.dirty?()
+        }/>
         {list.items.map (item) =>
-          <li draggable>
+          <li>
             <textarea value={item}>
         }
         <form .add preventdefault:submit {onSubmit$}>
           <input name=""/>
           <button >Add</button>
-      <ul .placeholder>
     }
+    <ul .placeholder>
   <button .new-list onClick$={$ () =>
     state.lists.push({
+      name: "New List"
       items: []
     })
+    window.dirty?()
+    return
   }> New List
