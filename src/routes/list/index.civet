@@ -8,7 +8,9 @@ import {
   useOn,
   useOnDocument,
   useSignal,
+  useStore,
   useStyles$,
+  useTask$,
   useVisibleTask$,
 } from @builder.io/qwik
 
@@ -16,16 +18,18 @@ import style from ./style.styl?inline
 
 export default component$ =>
   useStyles$(style)
-  lists := useSignal([{
-    items: ["a", "b", "c"]
-  }, {
-    items: ["d", "e", "f"]
-  }, {
-    items: ["g", "h", "i"]
-  }])
+  state := useStore {
+    lists: [{
+      items: ["a", "b", "c"]
+    }, {
+      items: ["d", "e", "f"]
+    }, {
+      items: ["g", "h", "i"]
+    }]
+  }, deep: true
 
   useVisibleTask$ ({ cleanup, track }) =>
-    track(lists)
+    track(state.lists)
     listsEl := document.querySelector("div.lists") as HTMLElement
     placeholderEl := document.querySelector("ul.placeholder") as HTMLElement
     emptyImage := document.createElement("img")
@@ -88,7 +92,7 @@ export default component$ =>
 
               // targetEl is the container of all the lists
               if targetEl
-                n := lists.value.length
+                n := state.lists.length
                 { left, width } := targetEl.getBoundingClientRect()
                 x := Math.floor ( clientX - left ) * n / width
 
@@ -124,12 +128,11 @@ export default component$ =>
   , strategy: 'document-ready'
 
   <div .lists>
-    {lists.value.map (list, i) =>
+    {state.lists.map (list, i) =>
       onSubmit$ := $ (event: QwikSubmitEvent<HTMLFormElement>, form: HTMLFormElement) ->
+        debugger
         inputEl := form.querySelector("input") as HTMLInputElement
-        listsValue := lists.value
-        listsValue[i].items.push inputEl.value
-        lists.value = listsValue.slice()
+        list.items.push inputEl.value
         inputEl.value = ""
 
       <ul draggable>
@@ -143,3 +146,8 @@ export default component$ =>
           <button >Add</button>
       <ul .placeholder>
     }
+  <button .new-list onClick$={$ () =>
+    state.lists.push({
+      items: []
+    })
+  }> New List
