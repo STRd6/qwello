@@ -14,10 +14,7 @@ import {
   useVisibleTask$,
 } from @builder.io/qwik
 
-import style from ./style.styl?inline
-
 export default component$ =>
-  useStyles$(style)
   state := useStore {
     lists: [{
       items: ["a", "b", "c"]
