@@ -44,6 +44,7 @@ export default component$ =>
       console.log("saving lists", state.lists)
       window.localStorage.setItem "lists", JSON.stringify state.lists
 
+    // TODO: If I move this outside of useVisibleTask$ and use a closure instead of window.dirty it breaks rollup
     let timeout: number | null
     window.dirty = ->
       return if timeout
@@ -128,18 +129,16 @@ export default component$ =>
 
     dragend := (event: DragEvent) ->
       if activeItem
-        const endIndex = Array.prototype.indexOf.call placeholderEl.parentElement!.querySelectorAll(":scope > ul:not(.dragging)"), placeholderEl
+        const endIndex = Math.min state.lists.length-1, Array.prototype.indexOf.call placeholderEl.parentElement!.querySelectorAll(":scope > ul:not(.dragging)"), placeholderEl
         { startIndex } := activeItem
-        if startIndex === endIndex
-          return
 
-        // use splice to move the item
-        from := state.lists[startIndex]
-        to := state.lists[endIndex]
-        state.lists.splice endIndex, 0, state.lists.splice(startIndex, 1)[0]
-
-        console.log "moved", startIndex, endIndex, from.name, to.name
-        window.dirty?()
+        if endIndex !== -1 and endIndex !== startIndex
+          // use splice to move the item
+          from := state.lists[startIndex]
+          to := state.lists[endIndex]
+          state.lists.splice endIndex, 0, state.lists.splice(startIndex, 1)[0]
+          console.log "moved", startIndex, endIndex, from.name, to.name
+          window.dirty?()
 
         { el } := activeItem
         el.classList.remove "dragging"
