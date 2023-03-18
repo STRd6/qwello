@@ -11,7 +11,7 @@
   --qwik-light-blue: #18b6f6;
   --qwik-light-purple: #ac7ff4;
   --qwik-dark-purple: #713fc2;
-  --border-color: rgba(0, 0, 0, 0.2);
+  --border-color: rgba(0, 0, 0, 0.25);
   --border: 1px solid var(--border-color);
   --color-primary: var(--qwik-dark-blue);
   --shadow-low: 1px 1px 0px rgba(0, 0, 0, 0.5);
@@ -20,12 +20,43 @@
   --border-radius: 4px;
 }
 
+@font-face {
+  font-family: 'Bangers';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Bangers Regular'), local('Bangers-Regular'), url("/fonts/Bangers-v13.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Fira Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Fira Sans Regular'), local('FiraSans-Regular'), url("/fonts/FiraSans-v10-Regular.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Fira Sans';
+  font-style: italic;
+  font-weight: 400;
+  src: local('Fira Sans Italic'), local('FiraSans-Italic'), url("/fonts/FiraSans-v10-Italic.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Fira Sans';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Fira Sans Bold'), local('FiraSans-Bold'), url("/fonts/FiraSans-v10-Bold.woff2") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 *
   box-sizing: border-box
 
 body
   background-color: beige
-  font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif
+  color: rgba(0, 0, 0, 0.86)
+  font-family: "Fira Sans", sans-serif
   margin: 0
   padding: 0
 
@@ -35,13 +66,22 @@ main {
   overflow: hidden;
 }
 
-h1,
-h2 {
-  margin: 0 0 4px 0;
-}
+header
+  padding: 0 16px
+
+h1
+  color: var(--qwik-dark-purple)
+  font-family: 'Bangers', cursive
+  font-weight: 400
+  font-style: normal
+  text-shadow: 2px 1px 0 rgba(0, 0, 0, 0.25), 1px 1px 0 var(--qwik-dark-purple)
+
+h1, h2
+  margin: 0 0 4px 0
 
 button.new-list
   flex: 0 0 auto
+  height: 40px
   width: 400px
 
 section
@@ -50,7 +90,7 @@ section
   display: flex
   gap: 8px
   overflow: auto
-  padding: 20px
+  padding: 16px
 
 footer {
   padding: 15px;
@@ -83,8 +123,9 @@ ul
     border-radius: var(--border-radius)
     border: 2px solid transparent
     display: block
-    font-size: 16px
+    font-size: 24px
     font-weight: bold
+    height: 40px
     margin: 0 0 4px 0
     width: 100%
 
@@ -99,9 +140,13 @@ li
 :focus-visible
   outline: 2px solid var(--color-primary)
 
+input
+  color: inherit
+
 textarea
   border-radius: var(--border-radius)
   border: var(--border)
+  color: inherit
   display: block
   font: inherit
   height: 40px
@@ -139,6 +184,7 @@ form.add
     border-radius: var(--border-radius)
     border: var(--border)
     box-shadow: inset var(--shadow-low)
+    height: 40px
     margin-right: 4px
     padding: 8px
     width: 100%

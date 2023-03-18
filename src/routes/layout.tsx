@@ -20,8 +20,10 @@ export default component$(() => {
         </section>
       </main>
       <footer>
-        I'm the footer component
-      </footer>
+      <a href="https://www.builder.io/" target="_blank">
+        Made with ♡ by Builder.io
+      </a>
+    </footer>
     </>
   );
 });

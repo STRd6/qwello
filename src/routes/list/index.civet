@@ -123,7 +123,6 @@ export default component$ =>
                 x := Math.floor ( clientX - left ) * n / width
 
                 listElements := targetEl.querySelectorAll(":scope > ul[draggable]:not(.dragging)")
-                document.querySelector("div.debug")!.textContent = `${x}, ${listElements.length}`
                 targetEl.insertBefore placeholderEl, listElements[x]
 
 

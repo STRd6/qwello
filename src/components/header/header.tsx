@@ -7,8 +7,7 @@ export default component$(() => {
 
   return (
     <header>
-      I'm the header component
-      <div class="debug" />
+      <h1>Qwello</h1>
     </header>
   );
 });
