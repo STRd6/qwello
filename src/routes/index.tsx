@@ -1,8 +1,8 @@
-import { App } from "../components/app.civet";
+import App from "../components/app.civet";
 
 export default App;
 
-export const head: DocumentHead = {
+export const head = {
   title: "Qwello",
   meta: [
     {
