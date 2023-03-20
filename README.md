@@ -76,3 +76,9 @@ Basic problems that should be solved by any UI framework:
 - Trello lists of lists
 - Spreadsheet
 - Table
+
+## Static Site Generator (Node.js)
+
+```
+yarn build.server
+```
