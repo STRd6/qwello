@@ -76,8 +76,10 @@ export default component$ =>
       el := closest(target, "[draggable]")
 
       if el
-        { clientX, clientY } := event
-        event.dataTransfer?.setDragImage(emptyImage, 0, 0)
+        { clientX, clientY, dataTransfer } := event
+
+        if dataTransfer
+          dataTransfer.setDragImage emptyImage, 0, 0
 
         rect := el.getBoundingClientRect()
         offset :=
@@ -152,6 +154,8 @@ export default component$ =>
 
         activeItem = null
         placeholderEl.style.display = "none"
+        // Return placeholder to original position, otherwise qwik gets confused when pushing a new list
+        placeholderEl.parentElement!.insertBefore placeholderEl, null
 
     // NOTE: Attaching dragover to document so we don't have dead spots based on which element we are over
     document.addEventListener "dragover", dragover
@@ -197,10 +201,9 @@ export default component$ =>
     }
     <ul .placeholder>
   <button .new-list onClick$={$ =>
-    state.lists.push({
+    state.lists.push
       name: "New List"
       items: []
-    })
     window.dirty?()
     return
   }> New List
