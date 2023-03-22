@@ -76,6 +76,7 @@ export default component$ =>
       el := closest(target, "[draggable]")
 
       if el
+        event.preventDefault()
         { clientX, clientY, dataTransfer } := event
 
         if dataTransfer
@@ -99,6 +100,7 @@ export default component$ =>
             width: rect.width + "px"
             display: "block"
 
+          el.parentElement!.insertBefore placeholderEl, el
           el.classList.add "dragging"
 
           Object.assign el.style,
@@ -107,7 +109,7 @@ export default component$ =>
 
       return
 
-    dragover := (event: DragEvent) ->
+    pointermove := (event: DragEvent) ->
       if activeItem
         event.preventDefault()
         { clientX, clientY, target } := event
@@ -133,7 +135,7 @@ export default component$ =>
                 targetEl.insertBefore placeholderEl, listElements[x]
 
 
-    dragend := (event: DragEvent) ->
+    pointerup := (event: DragEvent) ->
       if activeItem
         const endIndex = Math.min state.lists.length-1, Array.prototype.indexOf.call placeholderEl.parentElement!.querySelectorAll(":scope > ul:not(.dragging)"), placeholderEl
         { startIndex } := activeItem
@@ -158,13 +160,13 @@ export default component$ =>
         placeholderEl.parentElement!.insertBefore placeholderEl, null
 
     // NOTE: Attaching dragover to document so we don't have dead spots based on which element we are over
-    document.addEventListener "dragover", dragover
-    document.addEventListener "dragend", dragend
+    document.addEventListener "pointermove", pointermove
+    document.addEventListener "pointerup", pointerup
     listsEl.addEventListener "dragstart", dragstart
 
     cleanup =>
-      document.removeEventListener "dragover", dragover
-      document.removeEventListener "dragend", dragend
+      document.removeEventListener "pointermove", pointermove
+      document.removeEventListener "pointerup", pointerup
       listsEl.removeEventListener "dragstart", dragstart
 
   , strategy: 'document-ready'
