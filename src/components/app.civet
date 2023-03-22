@@ -70,6 +70,25 @@ export default component$ =>
       else
         node.parentElement!.closest(selector)
 
+    dragList := (clientX: number, clientY: number) ->
+      // NOTE: Dragging is much smoother when the style is updated in an animation frame.
+      window.requestAnimationFrame ->
+        if activeItem
+          { el, offset } := activeItem
+          Object.assign el.style,
+            top:  clientY - offset.y + "px"
+            left: clientX - offset.x + "px"
+
+          // listsEl is the container of all the lists
+          if listsEl
+            n := state.lists.length
+            { left, width } := listsEl.getBoundingClientRect()
+            x := Math.floor ( clientX - left ) * n / width
+
+            listElements := listsEl.querySelectorAll(":scope > ul[draggable]:not(.dragging)")
+            listsEl.insertBefore placeholderEl, listElements[x]
+
+
     dragstart := (event: DragEvent) ->
       target .= event.target as HTMLElement | Node
       // Find the closest draggable element
@@ -95,40 +114,16 @@ export default component$ =>
             width: rect.width + "px"
             display: "block"
 
-          el.parentElement!.insertBefore placeholderEl, el
           el.classList.add "dragging"
-
-          Object.assign el.style,
-            top:  clientY - offset.y + "px"
-            left: clientX - offset.x + "px"
+        dragList(clientX, clientY)
 
       return
 
     pointermove := (event: PointerEvent) ->
       if activeItem
         event.preventDefault()
-        { clientX, clientY, target } := event
-
-        // NOTE: Dragging is much smoother when the style is updated in an animation frame.
-        window.requestAnimationFrame ->
-          if activeItem
-            { el, offset } := activeItem
-            Object.assign el.style,
-              top:  clientY - offset.y + "px"
-              left: clientX - offset.x + "px"
-
-            if target
-              targetEl := closest(target as HTMLElement, "div.lists")
-
-              // targetEl is the container of all the lists
-              if targetEl
-                n := state.lists.length
-                { left, width } := targetEl.getBoundingClientRect()
-                x := Math.floor ( clientX - left ) * n / width
-
-                listElements := targetEl.querySelectorAll(":scope > ul[draggable]:not(.dragging)")
-                targetEl.insertBefore placeholderEl, listElements[x]
-
+        { clientX, clientY } := event
+        dragList(clientX, clientY)
 
     pointerup := (event: PointerEvent) ->
       if activeItem
