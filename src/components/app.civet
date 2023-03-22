@@ -109,7 +109,7 @@ export default component$ =>
 
       return
 
-    pointermove := (event: DragEvent) ->
+    pointermove := (event: PointerEvent) ->
       if activeItem
         event.preventDefault()
         { clientX, clientY, target } := event
@@ -135,7 +135,7 @@ export default component$ =>
                 targetEl.insertBefore placeholderEl, listElements[x]
 
 
-    pointerup := (event: DragEvent) ->
+    pointerup := (event: PointerEvent) ->
       if activeItem
         const endIndex = Math.min state.lists.length-1, Array.prototype.indexOf.call placeholderEl.parentElement!.querySelectorAll(":scope > ul:not(.dragging)"), placeholderEl
         { startIndex } := activeItem
