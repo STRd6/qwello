@@ -138,15 +138,16 @@ export default component$ =>
           console.log "moved", startIndex, endIndex, from.name, to.name
           window.dirty?()
 
-        el.classList.remove "dragging"
-        Object.assign el.style,
-          top: ""
-          left: ""
+        window.requestAnimationFrame ->
+          el.classList.remove "dragging"
+          Object.assign el.style,
+            top: ""
+            left: ""
 
-        activeItem = null
-        placeholderEl.style.display = "none"
-        // Return placeholder to original position, otherwise qwik gets confused when pushing a new list
-        placeholderEl.parentElement!.insertBefore placeholderEl, null
+          activeItem = null
+          placeholderEl.style.display = "none"
+          // Return placeholder to original position, otherwise qwik gets confused when pushing a new list
+          placeholderEl.parentElement!.insertBefore placeholderEl, null
 
     // NOTE: Attaching dragover to document so we don't have dead spots based on which element we are over
     document.addEventListener "pointermove", pointermove
