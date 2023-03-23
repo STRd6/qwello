@@ -116,7 +116,6 @@ export default component$ =>
         from := state.lists[startIndex]
         to := state.lists[endIndex]
         state.lists.splice endIndex, 0, state.lists.splice(startIndex, 1)[0]
-        console.log "moved", startIndex, endIndex, from.name, to.name
         window.dirty?()
 
       window.requestAnimationFrame ->
@@ -148,8 +147,8 @@ export default component$ =>
             targetList := listElements[x] as HTMLElement | undefined || activeListEl
 
             m := targetList.querySelectorAll(":scope > ul > [draggable]").length
-            { top, height } := targetList.getBoundingClientRect()
-            y := Math.floor ( clientY - top ) * m / height
+            { top, height } := targetList.querySelector(":scope > ul")!.getBoundingClientRect()
+            y := Math.min m-1, Math.max 0, Math.floor ( clientY - top ) * m / height
 
             // Reset old card placeholder
             if activeListEl !== targetList
@@ -174,19 +173,15 @@ export default component$ =>
       { startIndex, startList, el, activeListEl, activeList: endList } := this
       cardEls := activeListEl.querySelectorAll(":scope > ul > :not(.dragging)")
       cardPlaceholder := activeListEl.querySelector(":scope > ul > .placeholder")
-      endIndex := Math.min state.lists.length-1, Array.prototype.indexOf.call cardEls, cardPlaceholder
 
-      // @ts-ignore
-      document.querySelector("pre.debug").innerText = JSON.stringify {
-        startIndex, endIndex, startList, endList
-      }, null, 2
+      if endList
+        endIndex := Math.min endList.items.length-1, Array.prototype.indexOf.call cardEls, cardPlaceholder
 
-      if endList and (endIndex !== -1 and (endList !== startList or endIndex !== startIndex))
-        item := startList.items.splice(startIndex, 1)[0]
-        endList.items.splice(endIndex, 0, item)
+        if endIndex !== -1 and (endList !== startList or endIndex !== startIndex)
+          item := startList.items.splice(startIndex, 1)[0]
+          endList.items.splice(endIndex, 0, item)
 
-        console.log "moved", startIndex, endIndex, startList.name, endList.name
-        window.dirty?()
+          window.dirty?()
 
       window.requestAnimationFrame ->
         el.classList.remove "dragging"
@@ -233,7 +228,6 @@ export default component$ =>
           { clientX, clientY, dataTransfer } := event
 
           rect := el.getBoundingClientRect()
-          console.log "dragstart", rect
           offset :=
             x: clientX - rect.left
             y: clientY - rect.top
