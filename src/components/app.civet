@@ -22,11 +22,34 @@ declare global
 
 import { isBrowser } from @builder.io/qwik/build
 
+interface List
+  name: string
+  items: string[]
+
 interface State
-  lists: {
-    name: string
-    items: string[]
-  }[]
+  lists: List[]
+
+// Data about a card being dragged
+interface DragCard
+  activeList: List
+  activeListEl: HTMLElement
+  drag(clientX: number, clientY: number): void
+  drop(): void
+  el: HTMLElement
+  height: number
+  offset: { x: number; y: number }
+  startIndex: number
+  startList: List
+
+// Data about a list being dragged
+interface DragList
+  drag(clientX: number, clientY: number): void
+  drop(): void
+  el: HTMLElement
+  offset: { x: number; y: number }
+  startIndex: number
+
+type DragItem = DragCard | DragList
 
 export default component$ =>
   state := useStore<State> {
@@ -42,7 +65,7 @@ export default component$ =>
   useVisibleTask$ ({ cleanup, track }) =>
     track(state.lists)
     listsEl := document.querySelector("div.lists") as HTMLElement
-    placeholderEl := document.querySelector("ul.placeholder") as HTMLElement
+    placeholderEl := document.querySelector("div.list.placeholder") as HTMLElement
     emptyImage := document.createElement("img")
 
     persist := ->
@@ -58,11 +81,7 @@ export default component$ =>
         persist()
       , 500
 
-    let activeItem: null | {
-      el: HTMLElement
-      offset: { x: number; y: number }
-      startIndex: number
-    }
+    let activeItem: DragItem | null
 
     closest := (node: Node | HTMLElement, selector: string): HTMLElement | null ->
       if (node <? HTMLElement)
@@ -85,9 +104,100 @@ export default component$ =>
             { left, width } := listsEl.getBoundingClientRect()
             x := Math.floor ( clientX - left ) * n / width
 
-            listElements := listsEl.querySelectorAll(":scope > ul[draggable]:not(.dragging)")
+            listElements := listsEl.querySelectorAll(":scope > [draggable]:not(.dragging)")
             listsEl.insertBefore placeholderEl, listElements[x]
 
+    dropList := (this: DragList) ->
+      const endIndex = Math.min state.lists.length-1, Array.prototype.indexOf.call placeholderEl.parentElement!.querySelectorAll(":scope > :not(.dragging)"), placeholderEl
+      { startIndex, el } := this
+
+      if endIndex !== -1 and endIndex !== startIndex
+        // use splice to move the item
+        from := state.lists[startIndex]
+        to := state.lists[endIndex]
+        state.lists.splice endIndex, 0, state.lists.splice(startIndex, 1)[0]
+        console.log "moved", startIndex, endIndex, from.name, to.name
+        window.dirty?()
+
+      window.requestAnimationFrame ->
+        el.classList.remove "dragging"
+        Object.assign el.style,
+          top: ""
+          left: ""
+
+        activeItem = null
+        placeholderEl.style.display = "none"
+        // Return placeholder to original position, otherwise qwik gets confused when pushing a new list
+        placeholderEl.parentElement!.insertBefore placeholderEl, null
+
+    dragCard := (clientX: number, clientY: number) ->
+      window.requestAnimationFrame ->
+        if activeItem and "activeListEl" in activeItem
+          { el, activeListEl, offset } := activeItem
+          Object.assign el.style,
+            top:  clientY - offset.y + "px"
+            left: clientX - offset.x + "px"
+
+          // listsEl is the container of all the lists
+          if listsEl
+            n := state.lists.length
+            { left, width } := listsEl.getBoundingClientRect()
+            x := Math.floor ( clientX - left ) * n / width
+
+            listElements := listsEl.querySelectorAll(":scope > [draggable]")
+            targetList := listElements[x] as HTMLElement | undefined || activeListEl
+
+            m := targetList.querySelectorAll(":scope > ul > [draggable]").length
+            { top, height } := targetList.getBoundingClientRect()
+            y := Math.floor ( clientY - top ) * m / height
+
+            // Reset old card placeholder
+            if activeListEl !== targetList
+              oldPlaceholder := activeListEl.querySelector(":scope > ul > .placeholder") as HTMLElement
+              oldPlaceholder.style.display = "none"
+              oldPlaceholder.parentElement!.insertBefore oldPlaceholder, null
+              activeItem.activeListEl = targetList
+              activeItem.activeList = state.lists[x]
+
+            // Set new card placeholder
+            // TODO: account for list name height and form at bottom (do it in the structure of the html)
+            cardElements := targetList.querySelectorAll(":scope > ul > [draggable]:not(.dragging)")
+            cardPlaceholder := targetList.querySelector(":scope > ul > .placeholder") as HTMLElement | null
+            if cardPlaceholder
+              Object.assign cardPlaceholder.style,
+                height: activeItem.height + "px"
+                display: "block"
+
+              cardPlaceholder.parentElement!.insertBefore cardPlaceholder, cardElements[y]
+
+    dropCard := (this: DragCard) ->
+      { startIndex, startList, el, activeListEl, activeList: endList } := this
+      cardEls := activeListEl.querySelectorAll(":scope > ul > :not(.dragging)")
+      cardPlaceholder := activeListEl.querySelector(":scope > ul > .placeholder")
+      endIndex := Math.min state.lists.length-1, Array.prototype.indexOf.call cardEls, cardPlaceholder
+
+      // @ts-ignore
+      document.querySelector("pre.debug").innerText = JSON.stringify {
+        startIndex, endIndex, startList, endList
+      }, null, 2
+
+      if endList and (endIndex !== -1 and (endList !== startList or endIndex !== startIndex))
+        item := startList.items.splice(startIndex, 1)[0]
+        endList.items.splice(endIndex, 0, item)
+
+        console.log "moved", startIndex, endIndex, startList.name, endList.name
+        window.dirty?()
+
+      window.requestAnimationFrame ->
+        el.classList.remove "dragging"
+        Object.assign el.style,
+          top: ""
+          left: ""
+
+        activeItem = null
+        cardPlaceholder := activeListEl.querySelector(":scope > ul > .placeholder") as HTMLElement
+        cardPlaceholder.style.display = "none"
+        cardPlaceholder.parentElement!.insertBefore cardPlaceholder, null
 
     dragstart := (event: DragEvent) ->
       target .= event.target as HTMLElement | Node
@@ -95,27 +205,66 @@ export default component$ =>
       el := closest(target, "[draggable]")
 
       if el
-        event.preventDefault()
-        { clientX, clientY, dataTransfer } := event
+        if el.matches ".list"
+          event.preventDefault()
+          { clientX, clientY, dataTransfer } := event
 
-        rect := el.getBoundingClientRect()
-        offset :=
-          x: clientX - rect.left
-          y: clientY - rect.top
-        startIndex := Array.prototype.indexOf.call el.parentElement!.querySelectorAll(":scope > [draggable]"), el
-        activeItem = { el, offset, startIndex }
+          rect := el.getBoundingClientRect()
+          offset :=
+            x: clientX - rect.left
+            y: clientY - rect.top
+          startIndex := Array.prototype.indexOf.call el.parentElement!.querySelectorAll(":scope > [draggable]"), el
+          activeItem = { el, offset, startIndex, drag: dragList, drop: dropList }
 
-        window.requestAnimationFrame ->
-          if document.activeElement
-            (document.activeElement as HTMLElement).blur()
+          window.requestAnimationFrame ->
+            if document.activeElement
+              (document.activeElement as HTMLElement).blur()
 
-          Object.assign placeholderEl.style,
-            height: rect.height + "px"
-            width: rect.width + "px"
-            display: "block"
+            Object.assign placeholderEl.style,
+              height: rect.height + "px"
+              width: rect.width + "px"
+              display: "block"
 
-          el.classList.add "dragging"
-        dragList(clientX, clientY)
+            el.classList.add "dragging"
+          activeItem.drag(clientX, clientY)
+
+        else if el.matches "li.card"
+          event.preventDefault()
+          { clientX, clientY, dataTransfer } := event
+
+          rect := el.getBoundingClientRect()
+          console.log "dragstart", rect
+          offset :=
+            x: clientX - rect.left
+            y: clientY - rect.top
+          startIndex := Array.prototype.indexOf.call el.parentElement!.querySelectorAll(":scope > [draggable]"), el
+          activeListEl := el.closest(".list") as HTMLElement
+          cardPlaceholder := activeListEl.querySelector(":scope > ul > .placeholder") as HTMLElement
+          listIndex := Array.prototype.indexOf.call listsEl.querySelectorAll(":scope > [draggable]"), activeListEl
+          startList := state.lists[listIndex]
+          activeItem = {
+            el,
+            offset,
+            startIndex,
+            startList,
+            activeList: startList,
+            activeListEl,
+            height: rect.height,
+            drag: dragCard,
+            drop: dropCard
+          }
+
+          window.requestAnimationFrame ->
+            if document.activeElement
+              (document.activeElement as HTMLElement).blur()
+
+            Object.assign cardPlaceholder.style,
+              height: rect.height + "px"
+              width: rect.width + "px"
+              display: "block"
+
+            el.classList.add "dragging"
+          activeItem.drag(clientX, clientY)
 
       return
 
@@ -123,31 +272,11 @@ export default component$ =>
       if activeItem
         event.preventDefault()
         { clientX, clientY } := event
-        dragList(clientX, clientY)
+        activeItem.drag(clientX, clientY)
 
     pointerup := (event: PointerEvent) ->
       if activeItem
-        const endIndex = Math.min state.lists.length-1, Array.prototype.indexOf.call placeholderEl.parentElement!.querySelectorAll(":scope > ul:not(.dragging)"), placeholderEl
-        { startIndex, el } := activeItem
-
-        if endIndex !== -1 and endIndex !== startIndex
-          // use splice to move the item
-          from := state.lists[startIndex]
-          to := state.lists[endIndex]
-          state.lists.splice endIndex, 0, state.lists.splice(startIndex, 1)[0]
-          console.log "moved", startIndex, endIndex, from.name, to.name
-          window.dirty?()
-
-        window.requestAnimationFrame ->
-          el.classList.remove "dragging"
-          Object.assign el.style,
-            top: ""
-            left: ""
-
-          activeItem = null
-          placeholderEl.style.display = "none"
-          // Return placeholder to original position, otherwise qwik gets confused when pushing a new list
-          placeholderEl.parentElement!.insertBefore placeholderEl, null
+        activeItem.drop()
 
     // NOTE: Attaching dragover to document so we don't have dead spots based on which element we are over
     document.addEventListener "pointermove", pointermove
@@ -177,21 +306,23 @@ export default component$ =>
         window.dirty?()
         return
 
-      <ul draggable>
+      <div .list draggable>
         <div .close onClick$={$ => removeList list}> X
         <input value={list.name} onInput$={(_, el) =>
           list.name = el.value
           window.dirty?()
         }/>
-        {list.items.map (item) =>
-          <li>
-            <textarea value={item}>
-        }
+        <ul>
+          {list.items.map (item) =>
+            <li .card draggable>
+              <textarea value={item}>
+          }
+          <li .card.placeholder>
         <form .add preventdefault:submit {onSubmit$}>
           <input name=""/>
           <button >Add</button>
     }
-    <ul .placeholder>
+    <div .list.placeholder>
   <button .new-list onClick$={$ =>
     state.lists.push
       name: "New List"

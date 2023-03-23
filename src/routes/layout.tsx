@@ -1,7 +1,7 @@
-import { component$, Slot } from '@builder.io/qwik';
-import { routeLoader$ } from '@builder.io/qwik-city';
+import { component$, Slot } from "@builder.io/qwik";
+import { routeLoader$ } from "@builder.io/qwik-city";
 
-import Header from '../components/header/header';
+import Header from "../components/header/header";
 
 export const useServerTimeLoader = routeLoader$(() => {
   return {
@@ -20,10 +20,11 @@ export default component$(() => {
         </section>
       </main>
       <footer>
-      <a href="https://www.builder.io/" target="_blank">
-        Made with ♡ by Builder.io
-      </a>
-    </footer>
+        <a href="https://www.builder.io/" target="_blank">
+          Made with ♡ by Builder.io
+        </a>
+      </footer>
+      <pre class="debug"></pre>
     </>
   );
 });
