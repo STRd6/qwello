@@ -148,7 +148,7 @@ export default component$ =>
 
             m := targetList.querySelectorAll(":scope > ul > [draggable]").length
             { top, height } := targetList.querySelector(":scope > ul")!.getBoundingClientRect()
-            y := Math.min m-1, Math.max 0, Math.floor ( clientY - top ) * m / height
+            y := Math.min m, Math.max 0, Math.floor ( clientY - top ) * m / height
 
             // Reset old card placeholder
             if activeListEl !== targetList
@@ -175,7 +175,7 @@ export default component$ =>
       cardPlaceholder := activeListEl.querySelector(":scope > ul > .placeholder")
 
       if endList
-        endIndex := Math.min endList.items.length-1, Array.prototype.indexOf.call cardEls, cardPlaceholder
+        endIndex := Math.min endList.items.length, Array.prototype.indexOf.call cardEls, cardPlaceholder
 
         if endIndex !== -1 and (endList !== startList or endIndex !== startIndex)
           item := startList.items.splice(startIndex, 1)[0]
