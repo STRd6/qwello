@@ -7,11 +7,11 @@ A Trello style list of lists in Qwik.
 - [x] Add/Remove Lists
 - [x] Reorder Lists
 - [x] Add Item to List
-- [ ] Reorder Items
-- [ ] Move item between lists
+- [x] Reorder Items
+- [x] Move item between lists
+- [x] Persist to local storage
 - [ ] Remove Item
 - [ ] Item detail view
-- [x] Persist to local storage
 
 ## Technical Features
 
