@@ -44,5 +44,5 @@ A Trello style list of lists in Qwik.
 
 ## Qwik Qs
 
-- [ ] Persist closure rollup error
+- [ ] `persist` closure rollup error
 - [ ] How to get Civet + SSG working
