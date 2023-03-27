@@ -301,11 +301,12 @@ export default component$ =>
         return
 
       <div .list draggable>
-        <div .close onClick$={$ => removeList list}> X
-        <input value={list.name} onInput$={(_, el) =>
-          list.name = el.value
-          window.dirty?()
-        }/>
+        <div .title>
+          <div .close onClick$={$ => removeList list}> X
+          <input value={list.name} onInput$={(_, el) =>
+            list.name = el.value
+            window.dirty?()
+          }/>
         <ul>
           {list.items.map (item) =>
             <li .card draggable>
