@@ -7,21 +7,21 @@
   resolved "https://registry.yarnpkg.com/@adobe/css-tools/-/css-tools-4.2.0.tgz#e1a84fca468f4b337816fcb7f0964beb620ba855"
   integrity sha512-E09FiIft46CmH5Qnjb0wsW54/YQd69LsxeKUOWawmws1XWvyFGURnAChH0mlr7YPFR1ofwvUQfcL0J3lMxXqPA==
 
-"@builder.io/qwik-city@0.5.3":
-  version "0.5.3"
-  resolved "https://registry.yarnpkg.com/@builder.io/qwik-city/-/qwik-city-0.5.3.tgz#1449bbbee9ba649fb2842d25f20f317326688ef4"
-  integrity sha512-9S5IlcD5rUdrHHITvBkENNPdW6Tzu6ZAPlvdjFjN6qu92XB1IaNncxkpReOapNp1AoEjpaDxRzAYAN+jEsliJQ==
+"@builder.io/qwik-city@^0.101.0":
+  version "0.101.0"
+  resolved "https://registry.yarnpkg.com/@builder.io/qwik-city/-/qwik-city-0.101.0.tgz#3d2554cb8c10d55c84dec9600c132ebf79301e7f"
+  integrity sha512-26hoEbBQ5yEn13zjt5YCL/eULAptSoTPwylFSKrHPQd/3iafjGFr+DjiwpHUEodW3io1MsqZ0Uu9PIDKnGJbOg==
   dependencies:
     "@mdx-js/mdx" "2.3.0"
-    "@types/mdx" "2.0.3"
+    "@types/mdx" "2.0.4"
     source-map "0.7.4"
     vfile "5.3.7"
-    zod "^3.20.6"
+    zod "^3.21.4"
 
-"@builder.io/qwik@0.21.0":
-  version "0.21.0"
-  resolved "https://registry.yarnpkg.com/@builder.io/qwik/-/qwik-0.21.0.tgz#da967259a79f1aa45c23ea0dc395608c74a543b0"
-  integrity sha512-YDQcCSGPgXLQkY260N4XvYavxPNHewzIzIjqbl9hvnnk7a1s4EkcCrkudbGCl6VkkiQsDKMYPsemy4sFpKlafg==
+"@builder.io/qwik@^0.101.0":
+  version "0.101.0"
+  resolved "https://registry.yarnpkg.com/@builder.io/qwik/-/qwik-0.101.0.tgz#c8dde695680c6d01fd4c4361f8a61b4e08e7e08b"
+  integrity sha512-uXeN5tlquw8OKsRp/tQie2tEKv5h6AuyiVpNzdCqc6VUW5c0OEB063HnUr072u0ojL/3vPfdY1mAi+6MwMaEXQ==
 
 "@cush/relative@^1.0.0":
   version "1.0.0"
@@ -293,7 +293,12 @@
   dependencies:
     "@types/unist" "*"
 
-"@types/mdx@2.0.3", "@types/mdx@^2.0.0":
+"@types/mdx@2.0.4":
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/@types/mdx/-/mdx-2.0.4.tgz#d1cad61ccc803b3c248c3d9990a2a6880bef537f"
+  integrity sha512-qCYrNdpKwN6YO6FVnx+ulfqifKlE3lQGsNhvDaW9Oxzyob/cRLBJWow8GHBBD4NxQ7BVvtsATgLsX0vZAWmtrg==
+
+"@types/mdx@^2.0.0":
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/@types/mdx/-/mdx-2.0.3.tgz#43fd32414f17fcbeced3578109a6edd877a2d96e"
   integrity sha512-IgHxcT3RC8LzFLhKwP3gbMPeaK7BM9eBH46OdapPA7yvuIUJ8H6zHZV53J8hGZcTSnt95jANt+rTBNUUc22ACQ==
@@ -2460,7 +2465,7 @@ yocto-queue@^0.1.0:
   resolved "https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-0.1.0.tgz#0294eb3dee05028d31ee1a5fa2c556a6aaf10a1b"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
 
-zod@^3.20.6:
+zod@^3.21.4:
   version "3.21.4"
   resolved "https://registry.yarnpkg.com/zod/-/zod-3.21.4.tgz#10882231d992519f0a10b5dd58a38c9dabbb64db"
   integrity sha512-m46AKbrzKVzOzs/DZgVnG5H55N1sv1M8qZU3A8RIKbs3mrACDNeIOeilDymVb2HdmP8uwshOCF4uJ8uM9rCqJw==
