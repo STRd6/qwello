@@ -7,21 +7,21 @@
   resolved "https://registry.yarnpkg.com/@adobe/css-tools/-/css-tools-4.2.0.tgz#e1a84fca468f4b337816fcb7f0964beb620ba855"
   integrity sha512-E09FiIft46CmH5Qnjb0wsW54/YQd69LsxeKUOWawmws1XWvyFGURnAChH0mlr7YPFR1ofwvUQfcL0J3lMxXqPA==
 
-"@builder.io/qwik-city@^0.101.0":
-  version "0.101.0"
-  resolved "https://registry.yarnpkg.com/@builder.io/qwik-city/-/qwik-city-0.101.0.tgz#3d2554cb8c10d55c84dec9600c132ebf79301e7f"
-  integrity sha512-26hoEbBQ5yEn13zjt5YCL/eULAptSoTPwylFSKrHPQd/3iafjGFr+DjiwpHUEodW3io1MsqZ0Uu9PIDKnGJbOg==
+"@builder.io/qwik-city@^1":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@builder.io/qwik-city/-/qwik-city-1.0.0.tgz#9fec6b4edeb87b4000c095c086967cd6b1002099"
+  integrity sha512-nHlDsvYHRWpSmRgg3bb93shn0p1OeMLvBYyIINitGDPxRSK1RyddtJXFAE24MlEEwzetF82xSte3SiC55oPUaQ==
   dependencies:
     "@mdx-js/mdx" "2.3.0"
-    "@types/mdx" "2.0.4"
+    "@types/mdx" "2.0.5"
     source-map "0.7.4"
     vfile "5.3.7"
     zod "^3.21.4"
 
-"@builder.io/qwik@^0.101.0":
-  version "0.101.0"
-  resolved "https://registry.yarnpkg.com/@builder.io/qwik/-/qwik-0.101.0.tgz#c8dde695680c6d01fd4c4361f8a61b4e08e7e08b"
-  integrity sha512-uXeN5tlquw8OKsRp/tQie2tEKv5h6AuyiVpNzdCqc6VUW5c0OEB063HnUr072u0ojL/3vPfdY1mAi+6MwMaEXQ==
+"@builder.io/qwik@^1":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@builder.io/qwik/-/qwik-1.0.0.tgz#0dfa16f11be9df7d1cf5ac91adab04bb915066d0"
+  integrity sha512-U1eTIKTBUiW2dbPMCaTzS7K1bMCI9ovtfsvdduwnVThGXRSrX+v2X4U/UmHHPzfOjC55X5wYLc17cw5EwFBVVA==
 
 "@cush/relative@^1.0.0":
   version "1.0.0"
@@ -293,10 +293,10 @@
   dependencies:
     "@types/unist" "*"
 
-"@types/mdx@2.0.4":
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/@types/mdx/-/mdx-2.0.4.tgz#d1cad61ccc803b3c248c3d9990a2a6880bef537f"
-  integrity sha512-qCYrNdpKwN6YO6FVnx+ulfqifKlE3lQGsNhvDaW9Oxzyob/cRLBJWow8GHBBD4NxQ7BVvtsATgLsX0vZAWmtrg==
+"@types/mdx@2.0.5":
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/@types/mdx/-/mdx-2.0.5.tgz#9a85a8f70c7c4d9e695a21d5ae5c93645eda64b1"
+  integrity sha512-76CqzuD6Q7LC+AtbPqrvD9AqsN0k8bsYo2bM2J8pmNldP1aIPAbzUQ7QbobyXL4eLr1wK5x8FZFe8eF/ubRuBg==
 
 "@types/mdx@^2.0.0":
   version "2.0.3"
